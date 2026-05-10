@@ -1,0 +1,660 @@
+openapi: 3.1.0
+info:
+  title: Yoruba Phonology Assistant API
+  summary: Deterministic Yoruba-native G2P API
+  version: 0.1.0
+paths:
+  /health:
+    get:
+      summary: Health
+      operationId: health_health_get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                additionalProperties:
+                  type: string
+                type: object
+                title: Response Health Health Get
+  /phonemize:
+    post:
+      summary: Phonemize
+      operationId: phonemize_phonemize_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhonemizeRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PhonemizeResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /pronounce:
+    post:
+      summary: Pronounce
+      operationId: pronounce_pronounce_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PronounceRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PronounceResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /tone:
+    post:
+      summary: Tone
+      operationId: tone_tone_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ToneRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ToneResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /analyze:
+    post:
+      summary: Analyze
+      operationId: analyze_analyze_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnalyzeRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnalyzeResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /g2p:
+    post:
+      summary: 'Legacy: use /phonemize or /pronounce'
+      operationId: g2p_g2p_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/G2PRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/G2PResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+  /tokenize:
+    post:
+      summary: 'Legacy: use /analyze'
+      operationId: tokenize_tokenize_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenizeRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenizeResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+      deprecated: true
+  /ipa:
+    get:
+      summary: 'Legacy: use /pronounce'
+      operationId: ipa_ipa_get
+      deprecated: true
+      parameters:
+      - name: word
+        in: query
+        required: true
+        schema:
+          type: string
+          minLength: 1
+          title: Word
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IPAResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /disambiguate:
+    post:
+      summary: Disambiguate
+      operationId: disambiguate_disambiguate_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DisambiguateRequest'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DisambiguateResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    AnalyzeRequest:
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Text
+        include_ssml:
+          type: boolean
+          title: Include Ssml
+          default: false
+      type: object
+      required:
+      - text
+      title: AnalyzeRequest
+    AnalyzeResponse:
+      properties:
+        input:
+          type: string
+          title: Input
+        tokens:
+          items:
+            type: string
+          type: array
+          title: Tokens
+        digraph_units:
+          items:
+            type: string
+          type: array
+          title: Digraph Units
+        special_chars:
+          items:
+            type: string
+          type: array
+          title: Special Chars
+        syllables:
+          items:
+            type: string
+          type: array
+          title: Syllables
+        phonemes:
+          items:
+            type: string
+          type: array
+          title: Phonemes
+        tones:
+          items:
+            type: string
+          type: array
+          title: Tones
+        ipa:
+          type: string
+          title: Ipa
+        ssml:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ssml
+        confidence:
+          type: number
+          title: Confidence
+        method:
+          type: string
+          title: Method
+      type: object
+      required:
+      - input
+      - tokens
+      - digraph_units
+      - special_chars
+      - syllables
+      - phonemes
+      - tones
+      - ipa
+      - confidence
+      - method
+      title: AnalyzeResponse
+    DisambiguateRequest:
+      properties:
+        word:
+          type: string
+          minLength: 1
+          title: Word
+        context:
+          type: string
+          minLength: 1
+          title: Context
+        candidates:
+          items:
+            $ref: '#/components/schemas/DisambiguationCandidate'
+          type: array
+          minItems: 1
+          title: Candidates
+      type: object
+      required:
+      - word
+      - context
+      - candidates
+      title: DisambiguateRequest
+    DisambiguateResponse:
+      properties:
+        selected:
+          $ref: '#/components/schemas/DisambiguationCandidate'
+        confidence:
+          type: number
+          title: Confidence
+        method:
+          type: string
+          title: Method
+        status:
+          type: string
+          title: Status
+        stage:
+          type: string
+          enum:
+          - scaffold
+          - heuristic
+          title: Stage
+      type: object
+      required:
+      - selected
+      - confidence
+      - method
+      - status
+      - stage
+      title: DisambiguateResponse
+    DisambiguationCandidate:
+      properties:
+        form:
+          type: string
+          minLength: 1
+          title: Form
+        tones:
+          type: string
+          minLength: 1
+          title: Tones
+        meaning:
+          type: string
+          minLength: 1
+          title: Meaning
+      type: object
+      required:
+      - form
+      - tones
+      - meaning
+      title: DisambiguationCandidate
+    G2PRequest:
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Text
+        output_format:
+          type: string
+          const: json
+          title: Output Format
+          default: json
+        include_ipa:
+          type: boolean
+          title: Include Ipa
+          default: true
+        include_ssml:
+          type: boolean
+          title: Include Ssml
+          default: false
+      type: object
+      required:
+      - text
+      title: G2PRequest
+    G2PResponse:
+      properties:
+        input:
+          type: string
+          title: Input
+        syllables:
+          items:
+            type: string
+          type: array
+          title: Syllables
+        phonemes:
+          items:
+            type: string
+          type: array
+          title: Phonemes
+        tones:
+          items:
+            type: string
+          type: array
+          title: Tones
+        ipa:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ipa
+        confidence:
+          type: number
+          title: Confidence
+        method:
+          type: string
+          title: Method
+        ssml:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ssml
+        migration_notice:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Migration Notice
+      type: object
+      required:
+      - input
+      - syllables
+      - phonemes
+      - tones
+      - ipa
+      - confidence
+      - method
+      title: G2PResponse
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    IPAResponse:
+      properties:
+        word:
+          type: string
+          title: Word
+        ipa:
+          type: string
+          title: Ipa
+        tones:
+          items:
+            type: string
+          type: array
+          title: Tones
+        migration_notice:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Migration Notice
+      type: object
+      required:
+      - word
+      - ipa
+      - tones
+      title: IPAResponse
+    PhonemizeRequest:
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Text
+      type: object
+      required:
+      - text
+      title: PhonemizeRequest
+    PhonemizeResponse:
+      properties:
+        input:
+          type: string
+          title: Input
+        phonemes:
+          items:
+            type: string
+          type: array
+          title: Phonemes
+        syllables:
+          items:
+            type: string
+          type: array
+          title: Syllables
+        confidence:
+          type: number
+          title: Confidence
+        method:
+          type: string
+          title: Method
+      type: object
+      required:
+      - input
+      - phonemes
+      - syllables
+      - confidence
+      - method
+      title: PhonemizeResponse
+    PronounceRequest:
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Text
+        include_ssml:
+          type: boolean
+          title: Include Ssml
+          default: false
+      type: object
+      required:
+      - text
+      title: PronounceRequest
+    PronounceResponse:
+      properties:
+        input:
+          type: string
+          title: Input
+        phonemes:
+          items:
+            type: string
+          type: array
+          title: Phonemes
+        tones:
+          items:
+            type: string
+          type: array
+          title: Tones
+        ipa:
+          type: string
+          title: Ipa
+        ssml:
+          anyOf:
+          - type: string
+          - type: 'null'
+          title: Ssml
+        confidence:
+          type: number
+          title: Confidence
+        method:
+          type: string
+          title: Method
+      type: object
+      required:
+      - input
+      - phonemes
+      - tones
+      - ipa
+      - confidence
+      - method
+      title: PronounceResponse
+    TokenizeRequest:
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Text
+      type: object
+      required:
+      - text
+      title: TokenizeRequest
+    TokenizeResponse:
+      properties:
+        tokens:
+          items:
+            type: string
+          type: array
+          title: Tokens
+        digraph_units:
+          items:
+            type: string
+          type: array
+          title: Digraph Units
+        special_chars:
+          items:
+            type: string
+          type: array
+          title: Special Chars
+        migration_notice:
+          anyOf:
+          - additionalProperties: true
+            type: object
+          - type: 'null'
+          title: Migration Notice
+      type: object
+      required:
+      - tokens
+      - digraph_units
+      - special_chars
+      title: TokenizeResponse
+    ToneRequest:
+      properties:
+        text:
+          type: string
+          minLength: 1
+          title: Text
+      type: object
+      required:
+      - text
+      title: ToneRequest
+    ToneResponse:
+      properties:
+        input:
+          type: string
+          title: Input
+        tones:
+          items:
+            type: string
+          type: array
+          title: Tones
+        tone_units:
+          items:
+            type: string
+          type: array
+          title: Tone Units
+        confidence:
+          type: number
+          title: Confidence
+        method:
+          type: string
+          title: Method
+      type: object
+      required:
+      - input
+      - tones
+      - tone_units
+      - confidence
+      - method
+      title: ToneResponse
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+            - type: string
+            - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+        input:
+          title: Input
+        ctx:
+          type: object
+          title: Context
+      type: object
+      required:
+      - loc
+      - msg
+      - type
+      title: ValidationError

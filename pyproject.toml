@@ -1,0 +1,40 @@
+[build-system]
+requires = ["setuptools>=69", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "yoruba-g2p"
+version = "1.0.0rc1"
+description = "Deterministic Yoruba grapheme-to-phoneme converter"
+readme = "README.md"
+requires-python = ">=3.9"
+license = "Apache-2.0"
+authors = [
+  { name = "CrowtherNLP" }
+]
+keywords = ["yoruba", "nlp", "g2p", "phoneme", "tone"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Natural Language :: Yoruba",
+  "Topic :: Text Processing :: Linguistic"
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8.0", "PyYAML>=6.0"]
+api = [
+  "fastapi>=0.111.0",
+  "uvicorn>=0.30.0"
+]
+
+[tool.setuptools]
+package-dir = {"" = "."}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["yoruba_g2p*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]

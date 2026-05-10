@@ -1,0 +1,23 @@
+{
+  "baseline": {
+    "samples": 31,
+    "phoneme_error_rate": 0.6666666666666666,
+    "tone_accuracy": 0.4166666666666667,
+    "word_exact_match": 0.03225806451612903,
+    "total_phoneme_edits": 54
+  },
+  "rules": {
+    "samples": 31,
+    "phoneme_error_rate": 0.0,
+    "tone_accuracy": 1.0,
+    "word_exact_match": 1.0,
+    "total_phoneme_edits": 0
+  },
+  "hybrid": {
+    "samples": 31,
+    "phoneme_error_rate": 0.0,
+    "tone_accuracy": 1.0,
+    "word_exact_match": 1.0,
+    "total_phoneme_edits": 0
+  }
+}

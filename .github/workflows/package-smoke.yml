@@ -1,0 +1,40 @@
+name: Package Smoke
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  package-smoke:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Upgrade pip
+        run: python -m pip install --upgrade pip
+
+      - name: Install build tooling
+        run: python -m pip install build
+
+      - name: Build package
+        run: python -m build
+
+      - name: Install built wheel
+        run: python -m pip install dist/*.whl
+
+      - name: Smoke test packaged library
+        run: |
+          python -c "from yoruba_g2p import G2P, Tokenizer, ToneExtractor; print(G2P(backend='rules').convert('ìgbà').ipa)"
+          python -c "from yoruba_g2p import Tokenizer; print(Tokenizer().tokenize('Ẹ káàbọ̀'))"
