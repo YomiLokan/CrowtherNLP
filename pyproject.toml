@@ -16,7 +16,6 @@ keywords = ["yoruba", "nlp", "g2p", "phoneme", "tone"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3 :: Only",
-  "Natural Language :: Yoruba",
   "Topic :: Text Processing :: Linguistic"
 ]
 dependencies = []
