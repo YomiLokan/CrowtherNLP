@@ -6,6 +6,13 @@ All notable changes to CrowtherNLP Yoruba Phonology Assistant are documented her
 
 - No unreleased changes yet.
 
+## [1.0.1-rc1] - 2026-05-10
+
+### Changed
+
+- Distribution package renamed from `yoruba-g2p` to `crowthernlp-yoruba-g2p` to avoid registry namespace conflicts.
+- Release automation retained for GitHub Releases, TestPyPI (rc tags), and PyPI (final tags).
+
 ## [1.0.0] - 2026-05-10
 
 ### Milestones

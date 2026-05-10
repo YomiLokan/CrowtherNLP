@@ -91,7 +91,7 @@ CI requirements:
 
 ## Channel 2 — PyPI (Developer Distribution)
 
-**Package:** `yoruba-g2p`
+**Package:** `crowthernlp-yoruba-g2p`
 
 Positioning:
 

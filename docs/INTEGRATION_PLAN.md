@@ -144,7 +144,7 @@ Validation requirement:
 
 ## Package Integration Surfaces
 
-### Python (`yoruba-g2p`)
+### Python (`crowthernlp-yoruba-g2p`)
 
 Primary use cases:
 
