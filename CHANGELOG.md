@@ -6,6 +6,12 @@ All notable changes to CrowtherNLP Yoruba Phonology Assistant are documented her
 
 - No unreleased changes yet.
 
+## [1.0.2] - 2026-05-10
+
+### Changed
+
+- Finalized publishing path after trusted publisher configuration on PyPI.
+
 ## [1.0.1] - 2026-05-10
 
 ### Changed
