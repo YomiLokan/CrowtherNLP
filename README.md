@@ -1,66 +1,124 @@
-# Yoruba Phonology Assistant
+# CrowtherNLP Yoruba Phonology Infrastructure
 
-Yoruba Phonology Assistant is a Yoruba-native grapheme-to-phoneme (G2P) system built to prevent English phonetic fallback when processing Yoruba text.
+CrowtherNLP is an AI-native Yoruba phonology infrastructure project.
 
-The current repository ships a deterministic Standard Yoruba core with:
+This repository provides a deterministic, tone-aware Standard Yoruba pronunciation foundation that AI systems can call directly instead of inferring Yoruba pronunciation from English spelling patterns.
 
-- atomic handling of `gb` and `kp`
-- single-token nasal vowels: `an`, `en`, `in`, `ọn`, `un`
-- Yoruba tone extraction with `H`, `M`, and `L`
-- canonical FastAPI endpoints for `/phonemize`, `/pronounce`, `/tone`, and `/analyze`
-- legacy compatibility endpoints for `/g2p`, `/tokenize`, and `/ipa` with migration metadata
-- heuristic-first `/disambiguate` with scaffold fallback
-- a benchmark harness with baseline, rules, and hybrid comparison rows
+## Mission
 
-## What problem this solves
+Build a standardized Yoruba phonology and pronunciation infrastructure layer for:
 
-Many general-purpose systems treat Yoruba as if it were phonetically close to English. That causes predictable failures:
+- NLP systems
+- LLM tools and agents
+- TTS and speech systems
+- pronunciation-sensitive developer applications
 
-- splitting `gb` into `g` + `b`
-- flattening tone distinctions such as `bá`, `ba`, and `bà`
-- collapsing `ẹ` into `e`, `ọ` into `o`, and `ṣ` into `s` or `sh`
-- treating nasal vowels as separate vowel-plus-consonant sequences instead of atomic phonological units in this project model
+The project is named in honor of Bishop Samuel Ajayi Crowther.
 
-This repository is designed to stop those failures upstream.
+## Foundational Principle
 
-## Before and after
+Pronunciation infrastructure comes before advanced AI integration.
 
-Examples of distinctions the project preserves:
+```text
+Yoruba Text
+  -> CrowtherNLP Phonology Engine
+  -> Tone + Phoneme Representation
+  -> AI / LLM / TTS / Speech Systems
+```
 
-| Input | Correct Yoruba-native interpretation | Common fallback error |
-|-------|--------------------------------------|------------------------|
-| `gbogbo` | `gb` remains one phoneme | `g` + `b` split |
-| `bá` / `ba` / `bà` | High / Mid / Low tone remain distinct | tones flattened |
-| `ẹ̀kọ́` | `ẹ` and `ọ` stay Yoruba vowels | mapped to plain `e` and `o` |
-| `tan` | nasal vowel token handled as one unit in this project | vowel + trailing `n` treated separately |
+## Current Scope
 
-## Current status
+- Dialect scope: Standard Yoruba only
+- Core engine: deterministic rule engine
+- Priority: Yoruba-native phonology correctness before model-first integration
 
-- Scope: Standard Yoruba only
-- Core priority: Yoruba-native phonology before LLM integration
-- Rule engine: implemented
-- Canonical API (`/phonemize`, `/pronounce`, `/tone`, `/analyze`): implemented
-- Legacy compatibility layer (`/g2p`, `/tokenize`, `/ipa`): implemented with deprecation headers and payload migration notice
-- Disambiguation endpoint (`/disambiguate`): implemented (heuristic-first v1.1 scaffold)
-- Benchmark comparator: implemented
-- Neural fallback: planned
+## What Is Implemented
 
-## Quick start
+- Atomic handling of Yoruba units including `gb`, `kp`, `ṣ`, `ẹ`, `ọ`
+- Single-token nasal vowel representation (`an`, `en`, `in`, `ọn`, `un`)
+- Tone extraction with `H`, `M`, `L`
+- Canonical API endpoints:
+  - `POST /phonemize`
+  - `POST /pronounce`
+  - `POST /tone`
+  - `POST /analyze`
+- Legacy compatibility endpoints with migration metadata:
+  - `POST /g2p`
+  - `POST /tokenize`
+  - `GET /ipa`
+- `POST /disambiguate` (heuristic-first v1.1 scaffold)
+- OpenAPI parity checks, runtime migration contract checks, and docs contract checks in CI
+- Benchmark harness with baseline/rules/hybrid comparison
 
-Install the project in editable mode:
+## Why This Exists
+
+Many systems mis-handle Yoruba by:
+
+- splitting atomic phonemes (for example `gb` into `g` + `b`)
+- flattening tonal distinctions (`bá`, `ba`, `bà`)
+- collapsing distinct vowels and consonants (`ẹ`, `ọ`, `ṣ`) into non-Yoruba approximations
+
+CrowtherNLP prevents these errors at the infrastructure layer.
+
+## Canonical API
+
+### POST /phonemize
+Converts Yoruba orthography into phoneme tokens and syllable structure.
+
+### POST /pronounce
+Returns pronunciation-focused output, including IPA and optional SSML.
+
+### POST /tone
+Returns tone sequence and tone-bearing units.
+
+### POST /analyze
+Returns unified phonology analysis (tokens, phonemes, tones, IPA, diagnostics).
+
+## Migration Window
+
+Legacy endpoints remain available during the v1 migration window and include:
+
+- deprecation headers
+- `migration_notice` payload guidance with replacement endpoints
+
+Replacement mapping:
+
+- `/g2p` -> `/phonemize` and/or `/pronounce`
+- `/tokenize` -> `/analyze`
+- `/ipa` -> `/pronounce`
+
+Planned legacy removal target: v2.
+
+## Quick Start
+
+Install dependencies:
 
 ```bash
 /usr/bin/python3 -m pip install -e .
-/usr/bin/python3 -m pip install fastapi uvicorn httpx pytest
+/usr/bin/python3 -m pip install fastapi uvicorn httpx pytest PyYAML
 ```
 
-Basic Python usage:
+Run tests:
+
+```bash
+/usr/bin/python3 -m pytest -q
+```
+
+Run API locally:
+
+```bash
+/usr/bin/python3 -m api.server
+```
+
+Note: if copying manually, remove the space after `/` in the command above.
+
+## Minimal Python Usage
 
 ```python
 from yoruba_g2p import G2P
 
-g2p = G2P(backend="rules")
-result = g2p.convert("ìgbà", include_ssml=True)
+engine = G2P(backend="rules")
+result = engine.convert("ìgbà", include_ssml=True)
 
 print(result.phonemes)
 print(result.tones)
@@ -68,134 +126,63 @@ print(result.ipa)
 print(result.ssml)
 ```
 
-Example output:
+## Local API Docs
 
-```text
-['/i/', '/͡gb/', '/a/']
-['L', 'L']
-i͡gba
-<speak><phoneme alphabet="ipa" ph="i͡gba">ìgbà</phoneme></speak>
-```
-
-## Local API
-
-Start the API locally:
-
-```bash
-/usr/bin/python3 -m api.server
-```
-
-Interactive docs:
-
-- Swagger UI: `http://127.0.0.1:8000/docs`
-- ReDoc: `http://127.0.0.1:8000/redoc`
-
-Contract and examples in the repository:
-
-- OpenAPI spec: `openapi.yaml`
-- Example requests and responses: `docs/API_EXAMPLES.md`
-- Local run instructions: `Localrun.md`
-
-## API examples
-
-Canonical pronunciation analysis:
-
-```bash
-curl -X POST http://127.0.0.1:8000/pronounce \
-	-H "Content-Type: application/json" \
-	-d '{"text":"ìgbà","include_ssml":true}'
-```
-
-Canonical integrated analysis:
-
-```bash
-curl -X POST http://127.0.0.1:8000/analyze \
-	-H "Content-Type: application/json" \
-	-d '{"text":"Ẹ káàbọ̀","include_ssml":true}'
-```
-
-Legacy compatibility (during v1 migration window):
-
-```bash
-curl -X POST http://127.0.0.1:8000/g2p \
-	-H "Content-Type: application/json" \
-	-d '{"text":"ìgbà","include_ipa":true,"include_ssml":true}'
-```
+- Swagger UI: http://127.0.0.1:8000/docs
+- ReDoc: http://127.0.0.1:8000/redoc
 
 ## Benchmarks
 
-The repository includes a comparator harness that reports baseline, rules, and hybrid rows in publishing-plan format.
-
-Run it with:
+Run evaluator:
 
 ```bash
 /usr/bin/python3 benchmarks/evaluate.py \
-	--gold benchmarks/data/gold_words.jsonl \
-	--models baseline,rules,hybrid \
-	--json-out benchmarks/results/latest.json
+  --gold benchmarks/data/gold_words.jsonl \
+  --models baseline,rules,hybrid \
+  --json-out benchmarks/results/latest.json
 ```
 
-Current benchmark summary on the committed 31-sample Standard Yoruba gold set:
+Current benchmark summary (31-sample Standard Yoruba gold set):
 
-| Model | Phoneme Error Rate (PER) | Tone Accuracy | Word Exact Match |
-|-------|--------------------------|---------------|------------------|
+| Model | PER | Tone Accuracy | Word Exact Match |
+|------|-----|---------------|------------------|
 | baseline | 0.6667 | 0.4167 | 0.0323 |
 | rules | 0.0000 | 1.0000 | 1.0000 |
 | hybrid | 0.0000 | 1.0000 | 1.0000 |
 
-Current implementation note:
+`hybrid` is currently an alias of `rules` until neural fallback is introduced.
 
-- `hybrid` is presently an alias of `rules` until neural fallback is added.
+## Repository References
 
-## Repository layout
-
-```text
-yoruba-phonology-assistant/
-├── api/
-├── benchmarks/
-├── docs/
-├── tests/
-├── yoruba_g2p/
-├── CONTRIBUTING.md
-├── LICENSE
-├── Localrun.md
-├── README.md
-└── openapi.yaml
-```
-
-## Planned public endpoints and registries
-
-These namespaces are reserved in the project plan and can be used once publishing goes live:
-
-- GitHub: `https://github.com/CrowtherNLP/yoruba-phonology-assistant`
-- Hugging Face model: `https://huggingface.co/CrowtherNLP/yoruba-g2p`
-- Hugging Face dataset: `https://huggingface.co/datasets/CrowtherNLP/yoruba-phoneme-dataset`
-
-Current free API state:
-
-- Local development API is available now through the FastAPI server in this repository.
-- Public hosted API URL is planned but not yet published.
+- API examples: docs/API_EXAMPLES.md
+- Integration direction: docs/INTEGRATION_PLAN.md
+- Project direction: docs/PROJECT_PLAN.md
+- Publishing path: docs/PUBLISHING_PLAN.md
+- OpenAPI contract: openapi.yaml
+- Local run guide: Localrun.md
 
 ## Contributing
 
-Contribution guidelines are documented in `CONTRIBUTING.md`.
+See CONTRIBUTING.md.
 
-Please preserve the project decisions already made:
+Please preserve these project constraints:
 
 - Standard Yoruba only for v1.x
 - atomic phoneme representation
-- nasal vowels as single phoneme tokens
-- phonology-first development before LLM integration work
+- tone as first-class computational data
+- phonology infrastructure first, advanced AI integration second
+
+## License
+
+Apache 2.0 (see LICENSE).
 
 ## Citation
 
-If you use this repository in research or downstream tooling, cite it as:
-
 ```bibtex
-@software{crowthernlp_yoruba_phonology_assistant_2026,
-	author = {CrowtherNLP},
-	title = {Yoruba Phonology Assistant},
-	year = {2026},
-	url = {https://github.com/CrowtherNLP/yoruba-phonology-assistant}
+@software{crowthernlp_yoruba_phonology_infrastructure_2026,
+  author = {CrowtherNLP},
+  title = {CrowtherNLP Yoruba Phonology Infrastructure},
+  year = {2026},
+  url = {https://github.com/YomiLokan/CrowtherNLP}
 }
 ```
