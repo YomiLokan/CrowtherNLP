@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "crowthernlp-yoruba-g2p"
-version = "1.0.1rc2"
+version = "1.0.1"
 description = "Deterministic Yoruba grapheme-to-phoneme converter"
 readme = "README.md"
 requires-python = ">=3.9"
