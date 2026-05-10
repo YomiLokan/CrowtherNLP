@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "yoruba-g2p"
-version = "1.0.0rc3"
+version = "1.0.0"
 description = "Deterministic Yoruba grapheme-to-phoneme converter"
 readme = "README.md"
 requires-python = ">=3.9"
